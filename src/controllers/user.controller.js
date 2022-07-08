@@ -2,11 +2,12 @@ const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "./.env" });
+const { transporter, welcome } = require("../utils/mailer");
 
 module.exports = {
   async register(req, res) {
     try {
-      const { email, password, artistName, location } = req.body;
+      const { email, password, artistName, location, role } = req.body;
       const encPassword = await bcrypt.hash(
         password,
         Number(process.env.RENNALLA)
@@ -15,9 +16,10 @@ module.exports = {
         artistName,
         location,
         email,
+        role,
         password: encPassword,
         picture:
-          "https://res.cloudinary.com/clontrello/image/upload/v1654708527/samples/animals/reindeer.jpg",
+          "https://res.cloudinary.com/crishood/image/upload/v1657132695/cld-sample-2.jpg",
       });
 
       const token = jwt.sign({ id: user._id }, process.env.ORION, {
@@ -31,10 +33,11 @@ module.exports = {
           location: user.location,
           email: user.email,
           picture: user.picture,
+          role: user.role,
         },
       });
 
-      //await transporter.sendMail(welcome(user));
+      await transporter.sendMail(welcome(user));
     } catch (err) {
       res.status(400).json({ message: "User could not be registered" });
     }
@@ -45,11 +48,11 @@ module.exports = {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        throw new Error("User or password not valid");
+        throw new Error("Email or password not valid");
       }
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) {
-        throw new Error("User or password not valid !");
+        throw new Error("Email or password not valid !");
       }
       const token = jwt.sign({ id: user._id }, process.env.ORION, {
         expiresIn: 60 * 60 * 24 * 365,
@@ -58,11 +61,11 @@ module.exports = {
         message: "User logged",
         data: {
           token,
-          name: user.name,
           artistName: user.artistName,
           location: user.location,
           email: user.email,
           picture: user.picture,
+          role: user.role,
         },
       });
     } catch (err) {
@@ -82,7 +85,11 @@ module.exports = {
   async show(req, res) {
     try {
       const userId = req.user;
-      const user = await User.findById(userId);
+      const user = await User.findById(userId).populate(
+        "entries",
+        "description",
+        "media"
+      );
       res.status(200).json({ message: "User found", data: user });
     } catch (err) {
       res.status(404).json({ message: "User not found" });
@@ -95,7 +102,7 @@ module.exports = {
       const user = await User.findByIdAndUpdate(userId, req.body, {
         new: true,
       });
-      res.status(200).json({ message: "User update" });
+      res.status(200).json({ message: "User updated" });
     } catch (err) {
       res.status(400).json({ message: "User could not be updated", data: err });
     }

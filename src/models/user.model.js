@@ -28,9 +28,12 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    picture: {
+    role: {
       type: String,
       required: true,
+    },
+    picture: {
+      type: String,
     },
     bio: {
       type: String,
@@ -51,6 +54,14 @@ const userSchema = new Schema(
         {
           type: Schema.Types.ObjectId,
           ref: "User",
+        },
+      ],
+    },
+    entries: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Entry",
         },
       ],
     },
