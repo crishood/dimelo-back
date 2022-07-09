@@ -5,6 +5,15 @@ module.exports = {
   async list(req, res) {
     try {
       const userId = req.user;
+      const entries = await Entry.find();
+      res.status(200).json({ message: "Entries found", data: entries });
+    } catch (err) {
+      res.status(404).json({ message: "Entries not found" });
+    }
+  },
+  async listProfile(req, res) {
+    try {
+      const userId = req.user;
       const entries = await Entry.find({ user: userId });
       res.status(200).json({ message: "Entries found", data: entries });
     } catch (err) {
@@ -25,7 +34,7 @@ module.exports = {
   async create(req, res) {
     try {
       const userId = req.user;
-      const entry = await Board.create({ ...req.body, user: userId });
+      const entry = await Entry.create({ ...req.body, user: userId });
       const user = await User.findById(userId);
       user.entries.push(entry);
       user.save({ validateBeforeSave: false });

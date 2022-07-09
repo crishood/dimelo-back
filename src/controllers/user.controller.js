@@ -37,7 +37,7 @@ module.exports = {
         },
       });
 
-      await transporter.sendMail(welcome(user));
+      //await transporter.sendMail(welcome(user));
     } catch (err) {
       res.status(400).json({ message: "User could not be registered" });
     }
@@ -85,11 +85,7 @@ module.exports = {
   async show(req, res) {
     try {
       const userId = req.user;
-      const user = await User.findById(userId).populate(
-        "entries",
-        "description",
-        "media"
-      );
+      const user = await User.findById(userId).populate("entries");
       res.status(200).json({ message: "User found", data: user });
     } catch (err) {
       res.status(404).json({ message: "User not found" });

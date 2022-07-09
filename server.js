@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { connect } = require("./src/db");
+const userRouter = require("./src/routes/user");
+const entryRouter = require("./src/routes/entry");
 require("dotenv").config({ path: "./.env" });
 const { transporter, verify } = require("./src/utils/mailer");
 
@@ -10,10 +12,13 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(cors());
 connect();
-verify(transporter);
+//verify(transporter);
 
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.use("/users", userRouter);
+app.use("/entries", entryRouter);
 
 app.listen(PORT, () => {
   console.log("Let's do this sh!t homie");
