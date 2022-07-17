@@ -7,7 +7,8 @@ const { transporter, welcome } = require("../utils/mailer");
 module.exports = {
   async register(req, res) {
     try {
-      const { email, password, artistName, location, role } = req.body;
+      const { email, password, artistName, location, role, bio, links } =
+        req.body;
       const encPassword = await bcrypt.hash(
         password,
         Number(process.env.RENNALLA)
@@ -19,7 +20,9 @@ module.exports = {
         role,
         password: encPassword,
         picture:
-          "https://res.cloudinary.com/crishood/image/upload/v1657132695/cld-sample-2.jpg",
+          "https://res.cloudinary.com/crishood/image/upload/v1657394329/profile-picture_lpzuas.jpg",
+        bio,
+        links,
       });
 
       const token = jwt.sign({ id: user._id }, process.env.ORION, {
@@ -34,6 +37,8 @@ module.exports = {
           email: user.email,
           picture: user.picture,
           role: user.role,
+          bio: user.bio,
+          links: user.links,
         },
       });
 
@@ -66,6 +71,8 @@ module.exports = {
           email: user.email,
           picture: user.picture,
           role: user.role,
+          bio: user.bio,
+          links: user.links,
         },
       });
     } catch (err) {

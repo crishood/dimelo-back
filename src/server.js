@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const { connect } = require("./src/db");
-const userRouter = require("./src/routes/user");
-const entryRouter = require("./src/routes/entry");
-require("dotenv").config({ path: "./.env" });
-const { transporter, verify } = require("./src/utils/mailer");
+const { connect } = require("./db");
+const userRouter = require("./routes/user");
+const entryRouter = require("./routes/entry");
+require("dotenv").config();
+const { transporter, verify } = require("./utils/mailer");
 
 const PORT = process.env.PORT || 8000;
 
