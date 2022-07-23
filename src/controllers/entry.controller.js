@@ -3,9 +3,16 @@ const User = require("../models/user.model");
 
 module.exports = {
   async list(req, res) {
+    const userId = req.user;
     try {
-      const userId = req.user;
-      const entries = await Entry.find();
+      const currentUser = await User.findById(userId);
+      const following = currentUser.following.map((item) => item.toString());
+
+      console.log(following);
+      console.log(userId);
+      const entries = await Entry.find({
+        $or: [{ user: following }, { user: userId }],
+      }).populate("user", "artistName picture role");
       res.status(200).json({ message: "Entries found", data: entries });
     } catch (err) {
       res.status(404).json({ message: "Entries not found" });
@@ -14,7 +21,10 @@ module.exports = {
   async listProfile(req, res) {
     try {
       const userId = req.user;
-      const entries = await Entry.find({ user: userId });
+      const entries = await Entry.find({ user: userId }).populate(
+        "user",
+        "artistName picture role"
+      );
       res.status(200).json({ message: "Entries found", data: entries });
     } catch (err) {
       res.status(404).json({ message: "Entries not found" });
@@ -49,7 +59,7 @@ module.exports = {
   async destroy(req, res) {
     try {
       const { entryId } = req.params;
-      const entry = await Board.findByIdAndDelete(entryId);
+      const entry = await Entry.findByIdAndDelete(entryId);
       res.status(200).json({ message: "Entry destroyed", data: entry });
     } catch (err) {
       res

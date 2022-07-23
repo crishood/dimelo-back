@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 exports.transporter = nodemailer.createTransport({
-  host: "smtp.aol.com",
+  host: "crishood.com",
   port: 465,
   secure: true,
   auth: {

@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(cors());
 connect();
-//verify(transporter);
+verify(transporter);
 
 app.use(express.json());
 app.use(morgan("dev"));

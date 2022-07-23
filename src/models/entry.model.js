@@ -6,18 +6,18 @@ const entrySchema = new Schema(
       type: String,
       required: true,
     },
-    media: {
+    picture: {
+      type: String,
+      required: false,
+    },
+    audio: {
       type: String,
       required: false,
     },
     user: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-      ],
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {

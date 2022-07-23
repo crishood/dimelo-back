@@ -32,6 +32,7 @@ module.exports = {
         message: "User created",
         data: {
           token,
+          _id: user._id,
           artistName: user.artistName,
           location: user.location,
           email: user.email,
@@ -42,7 +43,7 @@ module.exports = {
         },
       });
 
-      //await transporter.sendMail(welcome(user));
+      await transporter.sendMail(welcome(user));
     } catch (err) {
       res.status(400).json({ message: "User could not be registered" });
     }
@@ -66,6 +67,7 @@ module.exports = {
         message: "User logged",
         data: {
           token,
+          _id: user._id,
           artistName: user.artistName,
           location: user.location,
           email: user.email,
@@ -82,7 +84,23 @@ module.exports = {
 
   async list(req, res) {
     try {
-      const users = await User.find();
+      const userId = req.user;
+      const users = await User.find().populate("entries");
+      res.status(200).json({ message: "Users found", data: users });
+    } catch (err) {
+      res.status(404).json({ message: "Users not found" });
+    }
+  },
+  async listRole(req, res) {
+    try {
+      const { role, location } = req.params;
+      const expression = `^${location}`;
+      const locationRegex = new RegExp(expression, "i");
+      console.log(req.body);
+      const users = await User.find({ location: { $regex: locationRegex } })
+        .where("role")
+        .equals(role)
+        .populate("entries");
       res.status(200).json({ message: "Users found", data: users });
     } catch (err) {
       res.status(404).json({ message: "Users not found" });
@@ -92,8 +110,24 @@ module.exports = {
   async show(req, res) {
     try {
       const userId = req.user;
-      const user = await User.findById(userId).populate("entries");
+      const user = await User.findById(userId)
+        .populate("entries")
+        .populate("followers")
+        .populate("following");
       res.status(200).json({ message: "User found", data: user });
+    } catch (err) {
+      res.status(404).json({ message: "User not found" });
+    }
+  },
+
+  async showUser(req, res) {
+    try {
+      const { artistName } = req.params;
+
+      const user = await User.find({ artistName: artistName }).populate(
+        "entries"
+      );
+      res.status(200).json({ message: "User found", data: user[0] });
     } catch (err) {
       res.status(404).json({ message: "User not found" });
     }
@@ -108,6 +142,42 @@ module.exports = {
       res.status(200).json({ message: "User updated" });
     } catch (err) {
       res.status(400).json({ message: "User could not be updated", data: err });
+    }
+  },
+  async followUser(req, res) {
+    const { follower, following, action } = req.body;
+    console.log(req.body);
+    try {
+      switch (action) {
+        case "follow":
+          await Promise.all([
+            User.findByIdAndUpdate(follower, {
+              $push: { following: following },
+            }),
+            User.findByIdAndUpdate(following, {
+              $push: { followers: follower },
+            }),
+          ]);
+          break;
+
+        case "unfollow":
+          await Promise.all([
+            User.findByIdAndUpdate(follower, {
+              $pull: { following: following },
+            }),
+            User.findByIdAndUpdate(following, {
+              $pull: { followers: follower },
+            }),
+          ]);
+          break;
+
+        default:
+          break;
+      }
+
+      res.status(200).json({ message: "Followed" });
+    } catch (err) {
+      res.status(400).json({ message: "Could not follow", data: err });
     }
   },
 
