@@ -2,9 +2,9 @@ const Busboy = require("busboy");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: "crishood",
-  api_key: "323812826527151",
-  api_secret: "X4GEHnnnCCDrX8_zZCYSk8rBdJA",
+  cloud_name: "",
+  api_key: "",
+  api_secret: "",
   secure: true,
 });
 
