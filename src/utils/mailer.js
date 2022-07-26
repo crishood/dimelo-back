@@ -42,7 +42,7 @@ exports.welcome = ({ artistName, email }) => {
     Esperamos que encuentres a las mejores personas para hacer la música más increíble de la galaxia.
   </p>
 </div>`,
-    text: `Dímelo <strong>${artistName}</strong>, racias por darnos tu confianza para
+    text: `Dímelo <strong>${artistName}</strong>, gracias por darnos tu confianza para
     ayudarte a encontrar a los mejores artistas en tu ciudad. E Esperamos que encuentres a las mejores personas para hacer la música más increíble de la galaxia.
     `,
   };

@@ -13,6 +13,6 @@ Dímelo is the platform to find beatmakers and songwriters in your city.
 1. Clone this repository.
 2. Use the command npm install.
 3. Download the frontend from [https://github.com/crishood/dimelo-back](https://github.com/crishood/dimelo)
-4. Add the env variables for Cloudinary, Mongo database and emails.
+4. Add the env variables for Cloudinary, Mongo database and emails, by following the `.env.example` file structure.
 5. Run the frontend.
 6. Run the command npm run dev.
